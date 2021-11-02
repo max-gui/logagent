@@ -1,4 +1,4 @@
-package router
+package routerutil
 
 import (
 	"fmt"
@@ -9,8 +9,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 
-	"github.com/max-gui/logagent/internal/pkg/logagent"
+	"github.com/max-gui/logagent/pkg/logagent"
 	// nethttp "net/http"
 )
 
@@ -89,8 +90,9 @@ func GinErrorMiddle() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
 			if e := recover(); e != nil {
+				logentry := e.(*logrus.Entry)
 				c.JSON(http.StatusInternalServerError, gin.H{
-					"msg": fmt.Sprint(e),
+					"msg": logentry.Message,
 				})
 				logger := logagent.Inst(c)
 				logger.Panic(e)
