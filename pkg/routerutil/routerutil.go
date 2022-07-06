@@ -12,6 +12,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/max-gui/logagent/pkg/logagent"
+	"github.com/max-gui/logagent/pkg/logsets"
 	// nethttp "net/http"
 )
 
@@ -66,9 +67,19 @@ func GinHeaderMiddle() gin.HandlerFunc {
 		// c.Set("span", c.Request.Header.Get("X-B3-SpanId"))
 		c.Set("trace", trace)
 		c.Set("span", span)
+
 		// c.Set("parentspanid", c.Request.Header.Get("X-B3-ParentSpanId"))
-		c.Set("env", c.Request.Header.Get("x-baggage-AF-env"))
-		c.Set("region", c.Request.Header.Get("x-baggage-AF-region"))
+		if c.Request.Header.Get("x-baggage-AF-env") == "" {
+			c.Set("env", *logsets.Appenv)
+		} else {
+			c.Set("env", c.Request.Header.Get("x-baggage-AF-env"))
+		}
+		if c.Request.Header.Get("x-baggage-AF-region") == "" {
+			c.Set("region", "default")
+		} else {
+			c.Set("region", c.Request.Header.Get("x-baggage-AF-region"))
+		}
+		// c.Set("region", c.Request.Header.Get("x-baggage-AF-region"))
 		// logger := logagent.Inst(c)
 		// logger.Print(c.Request.Header)
 		// c.Set("log", logagent.Inst(c))

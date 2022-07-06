@@ -95,9 +95,9 @@ func Inst(c context.Context) *logrus.Entry {
 		c.Value("env")
 		c.Value("region")
 		logger = Logagent.WithFields(logrus.Fields{
-			"service":             logsets.Appname,
-			"app_name":            logsets.Appname,
-			"app-env":             logsets.Appenv,
+			"service":             *logsets.Appname,
+			"app_name":            *logsets.Appname,
+			"app-env":             *logsets.Appenv,
 			"app-region":          "default",
 			"trace":               c.Value("trace"),
 			"span":                c.Value("span"),
