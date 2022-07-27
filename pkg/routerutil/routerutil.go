@@ -30,6 +30,7 @@ func GinLogger() gin.HandlerFunc {
 			path = path + "?" + raw
 		}
 		timestamp := time.Since(start)
+
 		var infomsg string
 		if c.Errors.String() == "" {
 			infomsg = fmt.Sprintf("%s %s %s from %s cost %s;bodysize is %s;",
@@ -39,13 +40,13 @@ func GinLogger() gin.HandlerFunc {
 				strconv.Itoa(c.Writer.Status()), c.Request.Method, path, c.ClientIP(), timestamp, strconv.Itoa(c.Writer.Size()), c.Errors.String())
 		}
 		logagent.Inst(c).
-			WithField("timestamp", timestamp).
+			WithField("request_time_span", timestamp.Milliseconds()).
 			WithField("clientip", c.ClientIP()).
 			WithField("method", c.Request.Method).
 			WithField("statuscode", c.Writer.Status()).
 			WithField("error", c.Errors.String()).
 			WithField("bodysize", c.Writer.Size()).
-			WithField("path", path).Infof(infomsg)
+			WithField("service_name", path).Infof(infomsg)
 		// Log only when path is not being skipped
 
 	}
