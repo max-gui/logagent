@@ -20,7 +20,7 @@ func GinLogger() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		// Start timer
-		start := time.Now()
+		start := c.Value("starttime").(time.Time)
 		path := c.Request.URL.Path
 		raw := c.Request.URL.RawQuery
 
@@ -29,18 +29,18 @@ func GinLogger() gin.HandlerFunc {
 		if raw != "" {
 			path = path + "?" + raw
 		}
-		timestamp := time.Since(start)
+		timestamp := time.Since(start).Microseconds()
 
 		var infomsg string
 		if c.Errors.String() == "" {
-			infomsg = fmt.Sprintf("%s %s %s from %s cost %s;bodysize is %s;",
+			infomsg = fmt.Sprintf("%s %s %s from %s cost %dms;bodysize is %s;",
 				strconv.Itoa(c.Writer.Status()), c.Request.Method, path, c.ClientIP(), timestamp, strconv.Itoa(c.Writer.Size()))
 		} else {
-			infomsg = fmt.Sprintf("%s %s %s from %s cost %s;bodysize is %s;errormsg: %s",
+			infomsg = fmt.Sprintf("%s %s %s from %s cost %dms;bodysize is %s;errormsg: %s",
 				strconv.Itoa(c.Writer.Status()), c.Request.Method, path, c.ClientIP(), timestamp, strconv.Itoa(c.Writer.Size()), c.Errors.String())
 		}
 		logagent.Inst(c).
-			WithField("request_time_span", timestamp.Milliseconds()).
+			WithField("request_time_span", timestamp).
 			WithField("clientip", c.ClientIP()).
 			WithField("method", c.Request.Method).
 			WithField("statuscode", c.Writer.Status()).
@@ -54,6 +54,7 @@ func GinLogger() gin.HandlerFunc {
 
 func GinHeaderMiddle() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		c.Set("starttime", time.Now())
 		// // "trace": "%X{X-B3-TraceId:-}",？
 		// // "span": "%X{X-B3-SpanId:-}",？
 		// // "parent": "%X{X-B3-ParentSpanId:-}",？
