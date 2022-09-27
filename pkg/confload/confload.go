@@ -12,8 +12,8 @@ import (
 
 func Load(c context.Context) []byte {
 
-	log := logagent.Inst(c)
-	bytes, err := os.ReadFile(*logsets.Apppath + string(os.PathSeparator) + "application-" + *logsets.Appenv + ".yml")
+	log := logagent.InstArch(c)
+	bytes, err := os.ReadFile(*logsets.Apppath + string(os.PathSeparator) + "application-" + *logsets.DCENV + ".yml")
 	if err != nil {
 		log.Panic(err)
 	}
@@ -47,7 +47,7 @@ func LoadEnv(env string, c context.Context) interface{} {
 		return value
 	}
 
-	log := logagent.Inst(c)
+	log := logagent.InstArch(c)
 	bytes, err := os.ReadFile(*logsets.Apppath + string(os.PathSeparator) + "application-" + env + ".yml")
 	if err != nil {
 		log.Panic(err)

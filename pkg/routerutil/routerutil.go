@@ -29,7 +29,7 @@ func GinLogger() gin.HandlerFunc {
 		if raw != "" {
 			path = path + "?" + raw
 		}
-		timestamp := time.Since(start).Microseconds()
+		timestamp := time.Since(start).Milliseconds()
 
 		var infomsg string
 		if c.Errors.String() == "" {
@@ -39,7 +39,7 @@ func GinLogger() gin.HandlerFunc {
 			infomsg = fmt.Sprintf("%s %s %s from %s cost %dms;bodysize is %s;errormsg: %s",
 				strconv.Itoa(c.Writer.Status()), c.Request.Method, path, c.ClientIP(), timestamp, strconv.Itoa(c.Writer.Size()), c.Errors.String())
 		}
-		logagent.Inst(c).
+		logagent.InstArch(c).
 			WithField("request_time_span", timestamp).
 			WithField("clientip", c.ClientIP()).
 			WithField("method", c.Request.Method).
@@ -107,7 +107,7 @@ func GinErrorMiddle() gin.HandlerFunc {
 				c.JSON(http.StatusInternalServerError, gin.H{
 					"msg": logentry.Message,
 				})
-				logger := logagent.Inst(c)
+				logger := logagent.InstArch(c)
 				logger.Panic(e)
 			}
 		}()

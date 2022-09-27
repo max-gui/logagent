@@ -5,8 +5,8 @@ import (
 )
 
 var (
-	Appname, Appenv, Appdc, Apppath, Port *string
-	Jsonlog                               *bool
+	Appname, Appenv, Appdc, DCENV, Apppath, Port *string
+	Jsonlog                                      *bool
 )
 
 func init() {
@@ -15,6 +15,7 @@ func init() {
 	Appname = flag.String("appname", "noname", "application's name")
 	Appenv = flag.String("appenv", "prod", "this application's working env")
 	Appdc = flag.String("appdc", "LFB", "this application's working dc")
+	DCENV = flag.String("appdcenv", "prod", "this application's working dcenv") //prfileActive
 	Port = flag.String("port", "7979", "this app's port")
 	Jsonlog = flag.Bool("jsonlog", false, "jsonlog or not")
 
