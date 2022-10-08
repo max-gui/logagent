@@ -218,18 +218,21 @@ func inst(c context.Context) *logrus.Entry {
 				"app_name":   *logsets.Appname,
 				"app-env":    *logsets.Appenv,
 				"app-region": "default",
+				// "trace":               c.Value("trace"),
+				// "span":                c.Value("span"),
+				// "x-baggage-AF-env":    c.Value("env"),
+				// "x-baggage-AF-region": c.Value("region"),
 			})
 		} else {
 			Logagent.SetFormatter(&nested.Formatter{
-				HideKeys: true,
+				HideKeys: false,
 				// FieldsOrder: []string{"component", "category"},
 			})
 
 			logger = Logagent.WithContext(c)
 		}
 	})
-
-	logger.WithFields(logrus.Fields{
+	logger = logger.WithFields(logrus.Fields{
 		"trace":               c.Value("trace"),
 		"span":                c.Value("span"),
 		"x-baggage-AF-env":    c.Value("env"),
