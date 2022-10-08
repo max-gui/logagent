@@ -90,9 +90,6 @@ func GetRootContextWithTrace() context.Context {
 
 func InstArch(c context.Context) *logrus.Entry {
 	logger = inst(c).WithField("log_type", "arch")
-	once.Do(func() {
-		logger = inst(c).WithField("log_type", "arch")
-	})
 
 	return logger
 }
@@ -217,14 +214,10 @@ func inst(c context.Context) *logrus.Entry {
 			// c.Value("env")
 			// c.Value("region")
 			logger = Logagent.WithFields(logrus.Fields{
-				"service":             *logsets.Appname,
-				"app_name":            *logsets.Appname,
-				"app-env":             *logsets.Appenv,
-				"app-region":          "default",
-				"trace":               c.Value("trace"),
-				"span":                c.Value("span"),
-				"x-baggage-AF-env":    c.Value("env"),
-				"x-baggage-AF-region": c.Value("region"),
+				"service":    *logsets.Appname,
+				"app_name":   *logsets.Appname,
+				"app-env":    *logsets.Appenv,
+				"app-region": "default",
 			})
 		} else {
 			Logagent.SetFormatter(&nested.Formatter{
@@ -234,6 +227,13 @@ func inst(c context.Context) *logrus.Entry {
 
 			logger = Logagent.WithContext(c)
 		}
+	})
+
+	logger.WithFields(logrus.Fields{
+		"trace":               c.Value("trace"),
+		"span":                c.Value("span"),
+		"x-baggage-AF-env":    c.Value("env"),
+		"x-baggage-AF-region": c.Value("region"),
 	})
 	// log.Print()
 	return logger
