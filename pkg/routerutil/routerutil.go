@@ -103,12 +103,14 @@ func GinErrorMiddle() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
 			if e := recover(); e != nil {
-				logentry := e.(*logrus.Entry)
-				c.JSON(http.StatusInternalServerError, gin.H{
-					"msg": logentry.Message,
-				})
-				logger := logagent.InstArch(c)
-				logger.Panic(e)
+				logentry, ok := e.(*logrus.Entry)
+				if ok {
+					c.String(http.StatusInternalServerError, logentry.Message)
+				} else {
+					c.String(http.StatusInternalServerError, fmt.Sprint(e))
+				}
+				// logger := logagent.InstArch(c)
+				// logger.Panic(e)
 			}
 		}()
 
