@@ -77,16 +77,21 @@ func GetRootContextWithTrace() context.Context {
 // 		log.Fatalln(err)
 // 	}
 
-// 	err = os.Remove(source)
-// 	if err != nil {
-// 		log.Fatalln(filepath.Abs(source))
-// 		log.Fatalln(err)
-// 	}
-// 	err = os.Rename(target, source)
-// 	if err != nil {
-// 		log.Fatalln(err)
-// 	}
-// }
+//		err = os.Remove(source)
+//		if err != nil {
+//			log.Fatalln(filepath.Abs(source))
+//			log.Fatalln(err)
+//		}
+//		err = os.Rename(target, source)
+//		if err != nil {
+//			log.Fatalln(err)
+//		}
+//	}
+func InstPlatform(c context.Context) *logrus.Entry {
+	logger = inst(c).WithField("log_type", "platform")
+
+	return logger
+}
 
 func InstArch(c context.Context) *logrus.Entry {
 	logger = inst(c).WithField("log_type", "arch")
@@ -95,7 +100,7 @@ func InstArch(c context.Context) *logrus.Entry {
 }
 
 func InstNomal(c context.Context) *logrus.Entry {
-	logger = inst(c).WithField("", "")
+	logger = inst(c).WithField("log_type", "normal")
 
 	return logger
 }
